@@ -2,22 +2,20 @@ import java.util.Scanner;
 
 public class Assignment1 {
     
-    private double originalDecimal;
     private double absDecimal;
     private int splitInt;
     private double splitDecimal;
     private String binary;
     private String sign;
     private String significand;
-    private int exponent;
+    private String exponent;
 
     public Assignment1(double originalDecimal) {
-        this.originalDecimal = originalDecimal; 
         this.absDecimal = Math.abs(originalDecimal);
         this.splitInt = (int) Math.floor(absDecimal);
         this.splitDecimal = absDecimal - splitInt;
         this.binary = "";
-        this.sign = (absDecimal < 0) ? "1" : "0";
+        this.sign = (originalDecimal < 0) ? "1" : "0";
         this.significand = "";
     }
 
@@ -50,16 +48,20 @@ public class Assignment1 {
     }
 
     //method to get significand
-    public int getSignificand() {
+    public String getSignificand() {
         String significand = "";
         String stringBinary = String.valueOf(binary);
-        String[] parts = stringBinary.split("\\."); // parts[0]=10100 parts[1]=0
-        String combinedParts = parts[0] + parts[1];
+        String[] parts = stringBinary.split("\\."); 
+        String combinedParts = "";
+        if (this.splitDecimal == 0) {
+            combinedParts = parts[0];
+        } else {
+            combinedParts = parts[0] + parts[1];
+        }
+
         Boolean oneFound = false; 
 
-        //for input 10100.0 should get 1.01000  
-
-        for (int i=0; i < combinedParts.length() && significand.length() < 5; i++) {
+        for (int i=0; i < combinedParts.length() && significand.length() < 4; i++) {
             char bit = combinedParts.charAt(i);    
             if (oneFound) {
                 significand += bit;
@@ -68,20 +70,22 @@ public class Assignment1 {
                 oneFound = true;  
             }
         }
+         
+        while (significand.length() < 4) {
+            significand += "0";
+        }
 
         this.significand = significand;
-        return Integer.parseInt(significand);
+        return this.significand;
     }
 
     //method to get exponent
-    public int getExponent() {
-        String exbonent = "";
+    public String getExponent() {
         String stringBinary = String.valueOf(binary);
-        String[] parts = stringBinary.split("\\."); // parts[0]=101 parts[1]=0101
+        String[] parts = stringBinary.split("\\."); 
         Integer counter = 0;
         Boolean oneFound = false;
 
-        //for input 101.01 should get 1.0101
         if (Integer.valueOf(parts[0]) > 0) {
             for (int i=0; i < parts[0].length(); i++) {  
                 char bit = parts[0].charAt(i);   
@@ -91,11 +95,11 @@ public class Assignment1 {
                 if (bit == '1') {
                     oneFound = true;  
                 }
-            } 
+            }
         } else {
             for (int i=0; i < parts[1].length(); i++) {  
                 char bit = parts[1].charAt(i);   
-                if (oneFound) {
+                if (!oneFound) {
                     counter -= 1;
                 }
                 if (bit == '1') {
@@ -104,59 +108,72 @@ public class Assignment1 {
             } 
         }
         
+        int number = counter + 3;
         String stringExponent = "";
-        int number = counter;
-        int counter2 = 0;
+
         while (number > 0 && stringExponent.length() < 4) {
             int remainder = number % 2;
             number = number / 2;
             stringExponent = remainder + stringExponent; 
-            counter2 += 1;
         }
 
         while (stringExponent.length() < 3) {
             stringExponent = "0" + stringExponent;
         }
 
-        this.exponent = Integer.valueOf(stringExponent);
-        return Integer.valueOf(this.exponent);
+        this.exponent = stringExponent;
+        return this.exponent;
     }
 
-    //ecxess three
-
-    //normalize
+    //normailze method combine significant and exponent into scientific notation
+    public String normalize() {
+        String stringBinary = String.valueOf(binary);
+        String[] parts = stringBinary.split("\\.");
+        int decimalExponent = Integer.parseInt(getExponent(), 2);
+        if (Integer.valueOf(parts[0]) > 0) {
+            return "1." + getSignificand() + " * 2^" + decimalExponent;
+        } else {
+            return "1." + getSignificand() + " * 2^-" + decimalExponent;
+        }
+    }
 
     public static void main(String[] args) {
         System.out.println("1 convert to binary");
         System.out.println("2 normalize binary number");
         System.out.println("3 convert the exbonent to excess 3");
-        System.out.println("4 Show the bit pattern (sign, significand, and exponent binary bits)");
-        System.out.println("5 all");
-        System.out.println("Choose an option enter 1, 2, 3, 4, or 5: ");
-        Scanner menu = new Scanner(System.in);
-        String userChosenTask = menu.nextLine();
+        System.out.println("4 Show the sign, significand, and exponent");
+        System.out.println("Choose an option enter 1, 2, 3, or 4: ");
+        Scanner scanner = new Scanner(System.in);
+        String userChosenTask = scanner.nextLine();
+        if (userChosenTask.equals("1") || userChosenTask.equals("2") || userChosenTask.equals("3") || userChosenTask.equals("4")) {
 
-        System.out.println("Enter a decimal number:");
-        Scanner decimalInput = new Scanner(System.in);
-        String userDecimalInput = decimalInput.nextLine(); 
-        Double userDecimalInputReal = 0.0;
-        try {
-            userDecimalInputReal = Double.parseDouble(userDecimalInput);
-        } catch (NumberFormatException e){
-            System.out.println("Invalid input. Not a double.");
-            System.exit(0);
-        }
-        if (((userDecimalInputReal >= -31 && userDecimalInputReal <= -0.125)||(userDecimalInputReal >= 0.125 && userDecimalInputReal <= 31))) {
-            if (userChosenTask.equals("5")) {
+            System.out.println("Enter a decimal number:");
+            String userDecimalInput = scanner.nextLine(); 
+            Double userDecimalInputReal = 0.0;
+            try {
+                userDecimalInputReal = Double.parseDouble(userDecimalInput);
+            } catch (NumberFormatException e){
+                System.out.println("Invalid input. Not a double.");
+                System.exit(0);
+            }
+            if (((userDecimalInputReal >= -31 && userDecimalInputReal <= -0.125)||(userDecimalInputReal >= 0.125 && userDecimalInputReal <= 31))) {
                 Assignment1 x = new Assignment1(userDecimalInputReal);
-                System.out.println("Binary = " + x.convertBinary()); 
-                System.out.println("sign: " + x.sign +"\nexponent: "+x.getExponent()+"\nsignificand: " +x.getSignificand());
+                x.convertBinary();
+                if (userChosenTask.equals("1")) {
+                    System.out.println("Binary: " + ((x.sign.equals("1")) ? "-"+x.convertBinary() : x.convertBinary()));
+                } else if (userChosenTask.equals("2")) {
+                    System.out.println("normalized: " + ((x.sign.equals("1")) ? "-"+x.normalize() : x.normalize()));
+                } else if (userChosenTask.equals("3")) {
+                    System.out.println("Excess 3 Exponent: " + x.getExponent());
+                } else if (userChosenTask.equals("4")) {
+                    System.out.println("1 Sign: " + x.sign + "\n2 Significand: " + x.getSignificand() + "\n3 Exponent: " + x.getExponent());
+                }
+            } else {
+                System.out.println("Invalid input. Out of range.");
             }
         } else {
-            System.out.println("Invalid input. Out of range.");
+            System.out.println("Invalid input. Not a number 1-4");
         }
-
-        menu.close();
-        decimalInput.close();
+        scanner.close();
     }
 }
