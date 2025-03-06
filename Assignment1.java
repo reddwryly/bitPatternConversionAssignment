@@ -138,41 +138,49 @@ public class Assignment1 {
     }
 
     public static void main(String[] args) {
-        System.out.println("1 convert to binary");
-        System.out.println("2 normalize binary number");
-        System.out.println("3 convert the exbonent to excess 3");
-        System.out.println("4 Show the sign, significand, and exponent");
-        System.out.println("Choose an option enter 1, 2, 3, or 4: ");
         Scanner scanner = new Scanner(System.in);
-        String userChosenTask = scanner.nextLine();
-        if (userChosenTask.equals("1") || userChosenTask.equals("2") || userChosenTask.equals("3") || userChosenTask.equals("4")) {
-
-            System.out.println("Enter a decimal number:");
-            String userDecimalInput = scanner.nextLine(); 
-            Double userDecimalInputReal = 0.0;
-            try {
-                userDecimalInputReal = Double.parseDouble(userDecimalInput);
-            } catch (NumberFormatException e){
-                System.out.println("Invalid input. Not a double.");
-                System.exit(0);
+        Boolean run = true;
+        while (run) {
+            System.out.println("1 convert to binary");
+            System.out.println("2 normalize binary number");
+            System.out.println("3 convert the exbonent to excess 3");
+            System.out.println("4 Show the sign, significand, and exponent");
+            System.out.println("Choose an option enter 1, 2, 3, or 4: ");
+            System.out.println("Enter Y to exit");
+            String userChosenTask = scanner.nextLine();
+            if (userChosenTask.equals("Y")) {
+                run = false;
             }
-            if (((userDecimalInputReal >= -31 && userDecimalInputReal <= -0.125)||(userDecimalInputReal >= 0.125 && userDecimalInputReal <= 31))) {
-                Assignment1 x = new Assignment1(userDecimalInputReal);
-                x.convertBinary();
-                if (userChosenTask.equals("1")) {
-                    System.out.println("Binary: " + ((x.sign.equals("1")) ? "-"+x.convertBinary() : x.convertBinary()));
-                } else if (userChosenTask.equals("2")) {
-                    System.out.println("normalized: " + ((x.sign.equals("1")) ? "-"+x.normalize() : x.normalize()));
-                } else if (userChosenTask.equals("3")) {
-                    System.out.println("Excess 3 Exponent: " + x.getExponent());
-                } else if (userChosenTask.equals("4")) {
-                    System.out.println("1 Sign: " + x.sign + "\n2 Significand: " + x.getSignificand() + "\n3 Exponent: " + x.getExponent());
+            if (userChosenTask.equals("1") || userChosenTask.equals("2") || userChosenTask.equals("3") || userChosenTask.equals("4")) {
+                System.out.println("Enter a decimal number:");
+                String userDecimalInput = scanner.nextLine(); 
+                Double userDecimalInputReal = 0.0;
+                try {
+                    userDecimalInputReal = Double.parseDouble(userDecimalInput);
+                } catch (NumberFormatException e){
+                    System.out.println("Invalid input. Not a double.");
+                    System.exit(0);
                 }
+                if (((userDecimalInputReal >= -31 && userDecimalInputReal <= -0.125)||(userDecimalInputReal >= 0.125 && userDecimalInputReal <= 31))) {
+                    Assignment1 x = new Assignment1(userDecimalInputReal);
+                    x.convertBinary();
+                    if (userChosenTask.equals("1")) {
+                        System.out.println("Binary: " + ((x.sign.equals("1")) ? "-"+x.convertBinary() : x.convertBinary()));
+                    } else if (userChosenTask.equals("2")) {
+                        System.out.println("normalized: " + ((x.sign.equals("1")) ? "-"+x.normalize() : x.normalize()));
+                    } else if (userChosenTask.equals("3")) {
+                        System.out.println("Excess 3 Exponent: " + x.getExponent());
+                    } else if (userChosenTask.equals("4")) {
+                        System.out.println("1. Sign: " + x.sign + "\n2. Significand: " + x.getSignificand() + "\n3. Exponent: " + x.getExponent());
+                    }
+                } else {
+                    System.out.println("Invalid input. Out of range.");
+                }
+            } else if (userChosenTask.equals("Y")) {
+                System.out.println("You have exited");
             } else {
-                System.out.println("Invalid input. Out of range.");
+                System.out.println("Invalid input. Not a number 1-4");
             }
-        } else {
-            System.out.println("Invalid input. Not a number 1-4");
         }
         scanner.close();
     }
